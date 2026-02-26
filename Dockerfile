@@ -1,8 +1,17 @@
-FROM python:3.9
+FROM python:3.11-slim
 
 WORKDIR /config
-COPY ./ckb_balance.py ./requirements.txt /config/
-RUN pip3 install -r requirements.txt
+
+COPY requirements.txt /config/
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY ckb_balance.py /config/
+
+RUN useradd --no-create-home --shell /bin/false appuser
+USER appuser
+
+EXPOSE 3000
+
 ENV PORT=3000
 
-CMD "python3" "ckb_balance.py" "$mercury_rpc" "$ckb_wallet"
+CMD ["python3", "ckb_balance.py"]
